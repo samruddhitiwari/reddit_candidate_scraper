@@ -73,3 +73,37 @@ create policy "Users can update own preferences"
   to authenticated
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+-- ============================================
+-- Scrape Logs: track every scraper run
+-- ============================================
+
+create table if not exists public.scrape_logs (
+  id uuid primary key default gen_random_uuid(),
+  started_at timestamptz not null default now(),
+  finished_at timestamptz,
+  leads_found int default 0,
+  leads_inserted int default 0,
+  source text default 'api' check (source in ('api', 'cron', 'manual')),
+  status text default 'running' check (status in ('running', 'success', 'error')),
+  error_message text,
+  duration_ms int
+);
+
+create index if not exists idx_scrape_logs_started_at on public.scrape_logs(started_at desc);
+
+alter table public.scrape_logs enable row level security;
+
+-- Authenticated users can view scrape history
+create policy "Authenticated users can read scrape logs"
+  on public.scrape_logs
+  for select
+  to authenticated
+  using (true);
+
+-- Service role can insert/update scrape logs
+create policy "Service role can manage scrape logs"
+  on public.scrape_logs
+  for all
+  to service_role
+  using (true);

@@ -44,3 +44,38 @@ select option {
   background-color: #ffffff;
   color: #111827;
 }
+
+/* ─── Linear-style animated background grid ─── */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center center;
+}
+
+.grid-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 0%,
+    rgba(99, 102, 241, 0.06) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Fade mask for grid edges */
+.grid-fade {
+  mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    black 30%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    black 30%,
+    transparent 100%
+  );
+}

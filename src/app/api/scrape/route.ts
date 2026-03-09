@@ -2,19 +2,71 @@ import { NextResponse } from "next/server";
 import { scrapeReddit, saveLeadsToSupabase } from "@/lib/scraper";
 import { createServiceClient } from "@/lib/supabase/server";
 
-// Shared scrape handler
-async function runScrape() {
-  console.log("Starting Reddit scrape...");
-  const posts = await scrapeReddit();
-
+/**
+ * Shared scrape handler.
+ * Logs every run to the `scrape_logs` table for tracking.
+ */
+async function runScrape(source: "api" | "cron") {
   const supabase = createServiceClient();
-  const result = await saveLeadsToSupabase(posts, supabase);
+  const startTime = Date.now();
 
-  return NextResponse.json({
-    success: true,
-    scraped: posts.length,
-    ...result,
-  });
+  // Create log entry
+  const { data: logEntry } = await supabase
+    .from("scrape_logs")
+    .insert({ source, status: "running" })
+    .select("id")
+    .single();
+
+  const logId = logEntry?.id;
+
+  try {
+    console.log(`Starting Reddit scrape (source: ${source})...`);
+    const posts = await scrapeReddit();
+    const result = await saveLeadsToSupabase(posts, supabase);
+    const durationMs = Date.now() - startTime;
+
+    // Update log entry with results
+    if (logId) {
+      await supabase
+        .from("scrape_logs")
+        .update({
+          finished_at: new Date().toISOString(),
+          leads_found: posts.length,
+          leads_inserted: result.inserted,
+          status: "success",
+          duration_ms: durationMs,
+        })
+        .eq("id", logId);
+    }
+
+    return NextResponse.json({
+      success: true,
+      scraped: posts.length,
+      duration_ms: durationMs,
+      ...result,
+    });
+  } catch (error) {
+    const durationMs = Date.now() - startTime;
+
+    // Log the error
+    if (logId) {
+      await supabase
+        .from("scrape_logs")
+        .update({
+          finished_at: new Date().toISOString(),
+          status: "error",
+          error_message: String(error),
+          duration_ms: durationMs,
+        })
+        .eq("id", logId);
+    }
+
+    console.error("Scrape error:", error);
+    return NextResponse.json(
+      { error: "Scrape failed", details: String(error) },
+      { status: 500 }
+    );
+  }
 }
 
 // Verify the CRON_SECRET from the Authorization header
@@ -33,31 +85,13 @@ export async function GET(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  try {
-    return await runScrape();
-  } catch (error) {
-    console.error("Scrape error:", error);
-    return NextResponse.json(
-      { error: "Scrape failed", details: String(error) },
-      { status: 500 }
-    );
-  }
+  return runScrape("cron");
 }
 
-// POST – for manual triggers (e.g. curl)
+// POST – for manual triggers (e.g. curl, dashboard button)
 export async function POST(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  try {
-    return await runScrape();
-  } catch (error) {
-    console.error("Scrape error:", error);
-    return NextResponse.json(
-      { error: "Scrape failed", details: String(error) },
-      { status: 500 }
-    );
-  }
+  return runScrape("api");
 }
