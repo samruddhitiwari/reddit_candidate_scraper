@@ -55,7 +55,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <svg className="animate-spin h-8 w-8 text-indigo-600" viewBox="0 0 24 24">
+        <svg className="animate-spin h-8 w-8 text-violet-600" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
@@ -65,13 +65,13 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Settings</h1>
-      <p className="text-gray-500 text-sm mb-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-1">Settings</h1>
+      <p className="text-gray-500 text-sm mb-10">
         Manage your email alert preferences and notification settings.
       </p>
 
       {/* Email Alerts Toggle */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Email Alerts</h2>
@@ -85,7 +85,7 @@ export default function SettingsPage() {
               setSaved(false);
             }}
             className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
-              emailAlerts ? "bg-indigo-600" : "bg-gray-300"
+              emailAlerts ? "bg-violet-600" : "bg-gray-300"
             }`}
           >
             <span
@@ -97,32 +97,39 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Role Selection */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+      {/* Role Selection with Checkboxes */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-1">Alert Roles</h2>
-        <p className="text-gray-500 text-sm mb-4">
+        <p className="text-gray-500 text-sm mb-5">
           Select which roles you want to receive alerts for. Leave empty to get alerts for all roles.
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {ROLE_PATTERNS.map(({ role }) => (
-            <button
+            <label
               key={role}
-              onClick={() => toggleRole(role)}
-              className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
-                alertRoles.includes(role)
-                  ? "bg-indigo-50 border-indigo-300 text-indigo-700"
-                  : "bg-white border-gray-200 text-gray-600 hover:text-gray-900 hover:border-gray-300"
-              }`}
+              className="flex items-center gap-3 cursor-pointer group"
             >
-              {role}
-            </button>
+              <input
+                type="checkbox"
+                checked={alertRoles.includes(role)}
+                onChange={() => toggleRole(role)}
+                className="w-4.5 h-4.5 rounded border-gray-300 text-violet-600 focus:ring-violet-500 focus:ring-2 cursor-pointer accent-violet-600"
+              />
+              <span className={`text-sm font-medium transition-colors ${
+                alertRoles.includes(role)
+                  ? "text-violet-700"
+                  : "text-gray-600 group-hover:text-gray-900"
+              }`}>
+                {role}
+              </span>
+            </label>
           ))}
         </div>
       </div>
 
       {/* Save button */}
-      <div className="flex items-center gap-3">
-        <Button onClick={handleSave} disabled={saving}>
+      <div className="flex items-center gap-4">
+        <Button onClick={handleSave} disabled={saving} className="px-8 py-3 text-base">
           {saving ? "Saving..." : "Save Settings"}
         </Button>
         {saved && (

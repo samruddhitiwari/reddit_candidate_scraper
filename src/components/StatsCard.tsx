@@ -13,7 +13,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ icon, label, value }: StatsCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 group">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -21,7 +21,7 @@ export default function StatsCard({ icon, label, value }: StatsCardProps) {
           </p>
           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
         </div>
-        <span className="text-2xl">{icon}</span>
+        <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{icon}</span>
       </div>
     </div>
   );

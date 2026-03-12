@@ -15,10 +15,9 @@ export default function HomePage() {
       <HowItWorks />
       <CTASection />
 
-      {/* Footer */}
       <footer className="border-t border-gray-200 py-8">
-        <div className="mx-auto max-w-6xl px-6 text-center text-sm text-slate-500">
-          © 2026 CandidateFinder. Built for recruiters who move fast.
+        <div className="mx-auto max-w-7xl px-6 text-center text-sm text-gray-500">
+          © 2026 FindDevs. Built for recruiters who move fast.
         </div>
       </footer>
     </div>

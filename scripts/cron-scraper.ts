@@ -9,7 +9,30 @@
  * It scrapes Reddit for candidate-related posts and saves them to Supabase.
  */
 
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
 import { createClient } from "@supabase/supabase-js";
+
+// Load .env.local so the script works standalone (Next.js only loads it for dev/build)
+function loadEnvFile() {
+  const envPath = resolve(process.cwd(), ".env.local");
+  if (!existsSync(envPath)) return;
+
+  const content = readFileSync(envPath, "utf-8");
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIndex = trimmed.indexOf("=");
+    if (eqIndex === -1) continue;
+    const key = trimmed.slice(0, eqIndex).trim();
+    const value = trimmed.slice(eqIndex + 1).trim();
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadEnvFile();
 
 // ---- Inline config (mirrors src/lib/constants.ts for standalone use) ----
 

@@ -8,9 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CandidateFinder – Discover Tech Talent on Reddit",
+  title: "FindDevs – Discover Tech Talent on Reddit",
   description:
-    "Automatically discover candidates looking for tech internships and junior developer roles on Reddit. Surface recruiter leads instantly.",
+    "FindDevs scans Reddit in real time and surfaces developers posting about internships, jobs, and freelance opportunities so recruiters can reach them before anyone else.",
 };
 
 export default function RootLayout({

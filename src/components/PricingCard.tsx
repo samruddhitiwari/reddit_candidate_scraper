@@ -23,36 +23,36 @@ export default function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      className={`relative rounded-2xl p-8 transition-all duration-300 ${
+      className={`relative rounded-2xl transition-all duration-300 ${
         highlighted
-          ? "bg-white border-2 border-indigo-600 shadow-xl shadow-indigo-100 scale-105"
-          : "bg-white border border-gray-200 shadow-sm"
+          ? "bg-white border-2 border-violet-600 shadow-xl shadow-violet-100 scale-[1.03] p-10"
+          : "bg-white border border-gray-200 shadow-sm p-8 opacity-90"
       }`}
     >
       {highlighted && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="bg-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+          <span className="bg-violet-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
             Most Popular
           </span>
         </div>
       )}
 
       <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-1">{name}</h3>
+        <h3 className={`font-bold mb-1 ${highlighted ? "text-xl text-gray-900" : "text-lg text-gray-700"}`}>{name}</h3>
         <p className="text-gray-500 text-sm">{description}</p>
       </div>
 
-      <div className="mb-6">
-        <span className="text-4xl font-bold text-gray-900">{price}</span>
+      <div className="mb-8">
+        <span className={`font-bold text-gray-900 ${highlighted ? "text-5xl" : "text-4xl"}`}>{price}</span>
         <span className="text-gray-500 text-sm ml-1">/{period}</span>
       </div>
 
-      <ul className="space-y-3 mb-8">
+      <ul className={`space-y-3 ${highlighted ? "mb-10" : "mb-8"}`}>
         {features.map((feature, i) => (
           <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`w-5 h-5 flex-shrink-0 ${highlighted ? "text-indigo-600" : "text-emerald-600"}`}
+              className={`w-5 h-5 flex-shrink-0 ${highlighted ? "text-violet-600" : "text-emerald-600"}`}
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={2}
@@ -68,11 +68,13 @@ export default function PricingCard({
       <button
         onClick={onSelect}
         disabled={currentPlan}
-        className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
+        className={`w-full rounded-xl font-semibold transition-all duration-200 ${
+          highlighted ? "py-4 text-base" : "py-3 text-sm"
+        } ${
           currentPlan
             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
             : highlighted
-              ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm"
+              ? "bg-violet-600 hover:bg-violet-500 text-white shadow-md shadow-violet-200"
               : "bg-gray-100 hover:bg-gray-200 text-gray-900"
         }`}
       >
